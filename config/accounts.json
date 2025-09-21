@@ -1,0 +1,29 @@
+[
+  {
+    "username": "Your Username",
+    "auth": "Authentication Method (microsoft, offline)",
+    "permissions": [
+      {
+        "level": 1,
+        "name": "administrator",
+        "players": [
+          "Players with admin access"
+        ]
+      },
+      {
+        "level": 2,
+        "name": "moderator",
+        "players": [
+          "Players with mod access"
+        ]
+      },
+      {
+        "level": 3,
+        "name": "user",
+        "blacklisted": [
+          "Players that are blacklisted from every command"
+        ]
+      }
+    ]
+  }
+]

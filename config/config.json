@@ -1,0 +1,33 @@
+{
+  "autoArmor": true,
+  "autoEat": true,
+  "autoTotem": true,
+  "commands": {
+    "chat": false,
+    "commandline": true,
+    "whisper": true
+  },
+  "console": {
+    "sendChat": true,
+    "theme": {
+      "oldTheme": false
+    }
+  },
+  "friends": [],
+  "logOnTotemPop": true,
+  "lookAtNearestPlayer": true,
+  "packetLogger": {
+    "enabled": false,
+    "packets": []
+  },
+  "pathfinder": {
+    "canDig": true,
+    "canPlace": true
+  },
+  "retaliate": {
+    "enabled": true,
+    "ignoreFriends": true
+  },
+  "velocity": true,
+  "noFall": true
+}
