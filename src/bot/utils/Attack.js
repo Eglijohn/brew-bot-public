@@ -11,7 +11,7 @@ import {teleport} from "./Movement.js";
  */
 export async function attack(instance, target, mace = false, maceHeight) {
     const entity = target?.entity || target;
-    const position = entity.position;
+    const position = entity?.position;
 
     if (!entity || !position) return;
 
