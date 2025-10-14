@@ -35,6 +35,7 @@ export default class Bot {
     async init() {
         const account = await getAccount(this.options.username);
         this.options.auth = account.auth;
+        this.options.brand = 'Brew Bot';
         this.options.profilesFolder = 'tokens/' + this.botOptions.username;
 
         this.bot = mineflayer.createBot(this.options);
