@@ -1,8 +1,8 @@
-import ChatCommand from "./ChatCommand.js";
+import ChatCommand from "../ChatCommand.js";
 
 export default class ChatSayCommand extends ChatCommand {
     constructor() {
-        super("say", "Say a message/command in chat", ["repeat", "chat"],1);
+        super("say", "!say <message> - Send a message in chat", ["repeat", "chat"],1);
     }
 
     async execute(instance, username, args) {

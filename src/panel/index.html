@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brew Bot Panel</title>
+    <link rel="icon" type="image/png" href="./logo.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap">
+
+    <style>
+        :root {
+            --nothing-bg: #000000;
+            --nothing-fg: #FFFFFF;
+            --nothing-gray: #808080;
+            --nothing-red: #FF0000;
+            --nothing-border: #333333;
+            --nothing-glow: rgba(255, 255, 255, 0.1);
+            --dot-size: 2px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100vh;
+            background-color: var(--nothing-bg);
+            font-family: "Roboto", sans-serif;
+            font-weight: 300;
+            color: var(--nothing-fg);
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+
+        iframe { border: none; }
+
+        /* Dot matrix pattern overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255,255,255,0.02) 1px, rgba(255,255,255,0.02) 2px),
+                    repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(255,255,255,0.02) 1px, rgba(255,255,255,0.02) 2px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .iframe-main {
+            width: 100%;
+            height: 100vh;
+            background-color: #000;
+            position: relative;
+            z-index: 0;
+        }
+
+        /* Nothing-style panels */
+        .panel {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid var(--nothing-border);
+            backdrop-filter: blur(40px);
+            z-index: 10;
+        }
+
+        /* Status Bar - Top right */
+        .status-bar {
+            top: 16px;
+            right: 16px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 400;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .glyph-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--nothing-red);
+            box-shadow: 0 0 12px var(--nothing-red);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .glyph-dot.active {
+            background: var(--nothing-fg);
+            box-shadow: 0 0 16px var(--nothing-fg);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Bot Data - Top left */
+        .bot-data {
+            top: 16px;
+            left: 16px;
+            padding: 20px 24px;
+            width: 240px;
+            font-size: 11px;
+            line-height: 2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 8px 0;
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            color: var(--nothing-gray);
+            font-weight: 300;
+        }
+
+        .data-value {
+            color: var(--nothing-fg);
+            font-weight: 400;
+            font-feature-settings: 'tnum';
+        }
+
+        .players-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--nothing-border);
+        }
+
+        .players-title {
+            color: var(--nothing-gray);
+            margin-bottom: 8px;
+            font-size: 10px;
+        }
+
+        .player-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        /* FPM iframe - Right side */
+        .iframe-fpm {
+            width: 320px;
+            height: 180px;
+            top: 86px;
+            right: 16px;
+            border: 1px solid var(--nothing-border);
+        }
+
+        /* Inventory iframe - Right side slide-out */
+        .iframe-inv {
+            width: 400px;
+            height: 380px;
+            bottom: 16px;
+            right: -368px;
+            border: 1px solid var(--nothing-border);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .iframe-inv::before {
+            content: '◀';
+            position: absolute;
+            left: -32px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 64px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid var(--nothing-border);
+            border-right: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--nothing-fg);
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .iframe-inv:hover {
+            right: 16px;
+        }
+
+        .iframe-inv:hover::before {
+            content: '▶';
+        }
+
+        /* Radar - Bottom left */
+        .radar {
+            bottom: 16px;
+            left: 16px;
+            width: 240px;
+            height: 240px;
+            padding: 16px;
+            border: 1px solid var(--nothing-border);
+        }
+
+        .radar-title {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--nothing-gray);
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            filter: contrast(1.1);
+        }
+
+        /* Dropdown menu */
+        .dropdown {
+            position: fixed;
+            display: none;
+            top: 282px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid var(--nothing-border);
+            backdrop-filter: blur(40px);
+            min-width: 200px;
+            z-index: 20;
+            overflow: hidden;
+        }
+
+        .dropdown-item {
+            padding: 16px 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 28px;
+        }
+
+        .dropdown-item:first-child {
+            font-weight: 500;
+            color: var(--nothing-gray);
+            cursor: text;
+            font-feature-settings: 'tnum';
+            font-size: 10px;
+        }
+
+        .dropdown-item:first-child:hover {
+            background: transparent;
+            padding-left: 20px;
+        }
+
+        /* Glyph accents */
+        .glyph-accent {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--nothing-fg);
+            opacity: 0.3;
+        }
+
+        .panel .glyph-accent:nth-child(1) { top: 8px; right: 8px; }
+        .panel .glyph-accent:nth-child(2) { bottom: 8px; left: 8px; }
+    </style>
+</head>
+
+<body>
+
+<!-- Main Viewer -->
+<iframe class="iframe-main" src="http://localhost:5000/" title="Viewer"></iframe>
+
+<!-- Status Bar -->
+<div class="status-bar panel">
+    <div class="status-item">
+        <span>FPS</span>
+        <span id="fps-counter" class="data-value">0</span>
+    </div>
+    <div class="status-item">
+        <span>System</span>
+        <div id="status-dot" class="glyph-dot"></div>
+    </div>
+</div>
+
+<!-- FPM iframe -->
+<iframe class="iframe-fpm panel" src="http://localhost:5001/" title="FPM"></iframe>
+
+<!-- Inventory iframe -->
+<iframe class="iframe-inv panel" src="http://localhost:5002/" title="Inventory"></iframe>
+
+<!-- Bot Data -->
+<div class="bot-data panel">
+    <div class="glyph-accent"></div>
+    <div class="glyph-accent"></div>
+
+    <div class="data-row">
+        <span class="data-label">Position</span>
+        <span id="bot-position" class="data-value">-- -- --</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Health</span>
+        <span id="bot-health" class="data-value">--</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Food</span>
+        <span id="bot-food" class="data-value">--</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Charge</span>
+        <span id="bot-charge" class="data-value">--</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">XP</span>
+        <span id="bot-xp" class="data-value">--</span>
+    </div>
+
+    <div class="players-section">
+        <div class="players-title">Nearby</div>
+        <div id="bot-nearby-players"></div>
+    </div>
+</div>
+
+<!-- Radar -->
+<div class="radar panel">
+    <div class="glyph-accent"></div>
+    <div class="glyph-accent"></div>
+    <div class="radar-title">Radar</div>
+    <canvas id="radar-canvas"></canvas>
+</div>
+
+<!-- Dropdown Menu -->
+<div id="dropdown" class="dropdown">
+    <div class="dropdown-item" id="dropdown-content"></div>
+    <div class="dropdown-item" id="move-bot">Walk</div>
+    <div class="dropdown-item" id="activate-block">Activate</div>
+    <div class="dropdown-item" id="teleport-bot">Teleport</div>
+    <div class="dropdown-item" id="test-teleport-bot">Test Teleport</div>
+    <div class="dropdown-item" id="attack-nearest-player">Attack Nearest</div>
+</div>
+
+<script type="module">
+    // Configuration
+    let config = { friends: [] };
+    fetch('/config')
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(c => Array.isArray(c.friends) && (config = c))
+        .catch(() => {});
+
+    // WebSocket
+    const ws = new WebSocket("ws://localhost:8080");
+    const statusDot = document.getElementById("status-dot");
+
+    ws.onopen = () => {
+        statusDot.classList.add("active");
+        statusDot.style.background = "var(--nothing-fg)";
+        statusDot.style.boxShadow = "0 0 16px var(--nothing-fg)";
+    };
+
+    ws.onclose = () => {
+        statusDot.classList.remove("active");
+        statusDot.style.background = "var(--nothing-red)";
+        statusDot.style.boxShadow = "0 0 12px var(--nothing-red)";
+    };
+
+    ws.onerror = () => {
+        statusDot.style.background = "#FFA500";
+        statusDot.style.boxShadow = "0 0 12px #FFA500";
+    };
+
+    ws.onmessage = e => {
+        const d = JSON.parse(e.data);
+        d.type === "blockClicked" ? showDropdown(d.position) : updateBotData(d);
+    };
+
+    // FPS Counter
+    let lastFrame = performance.now(), frames = 0;
+    const fpsCounter = document.getElementById("fps-counter");
+
+    function loop(now) {
+        frames++;
+        if (now - lastFrame >= 1000) {
+            fpsCounter.textContent = frames;
+            frames = 0;
+            lastFrame = now;
+        }
+        requestAnimationFrame(loop);
+    }
+
+    requestAnimationFrame(loop);
+
+    // Bot Data
+    let lastBotData = {};
+    function updateBotData(d) {
+        lastBotData = d;
+        document.getElementById("bot-position").textContent = `${Math.round(d.position.x)} ${Math.round(d.position.y)} ${Math.round(d.position.z)}`;
+        document.getElementById("bot-health").textContent = (Math.round(d.health * 2) / 2).toFixed(1);
+        document.getElementById("bot-food").textContent = Math.round(d.food);
+        document.getElementById("bot-xp").textContent = d.xp;
+        document.getElementById("bot-charge").textContent = d.charge;
+
+        const playersHTML = d.nearbyPlayers.map(p =>
+            `<div class="player-entry"><span>${p.username}</span><span class="data-value">${p.distance}M</span></div>`
+        ).join("");
+        document.getElementById("bot-nearby-players").innerHTML = playersHTML || '<div class="player-entry" style="color: var(--nothing-gray);">None</div>';
+
+        updateRadar(d.position, d.nearbyPlayers);
+    }
+
+    // Radar
+    const radarCanvas = document.getElementById("radar-canvas");
+    const ctx = radarCanvas.getContext("2d");
+    const range = 30;
+
+    function updateRadar(bot, players) {
+        const size = radarCanvas.width = radarCanvas.clientWidth;
+        const height = radarCanvas.height = radarCanvas.clientHeight;
+        const center = size / 2;
+
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, size, height);
+
+        // Grid lines
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+        ctx.lineWidth = 1;
+
+        // Circles
+        for (let i = 1; i <= 3; i++) {
+            ctx.beginPath();
+            ctx.arc(center, center, (size / 6) * i, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // Crosshair
+        ctx.beginPath();
+        ctx.moveTo(0, center);
+        ctx.lineTo(size, center);
+        ctx.moveTo(center, 0);
+        ctx.lineTo(center, height);
+        ctx.stroke();
+
+        // Bot position
+        ctx.fillStyle = "#FFFFFF";
+        ctx.shadowColor = "#FFFFFF";
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(center, center, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        if (!players) return;
+
+        // Players
+        players.forEach(p => {
+            if (!p.position) return;
+
+            const dx = p.position.x - bot.x;
+            const dz = p.position.z - bot.z;
+            const distance = Math.sqrt(dx * dx + dz * dz);
+            if (distance > range) return;
+
+            let color = "#FFFFFF";
+            if (config.friends.includes(p.username)) color = "#808080";
+
+            const x = center + (dx / range) * (center - 16);
+            const y = center + (dz / range) * (center - 16);
+
+            ctx.fillStyle = color;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 6;
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = "#FFF";
+            ctx.font = "8px Roboto";
+            ctx.textAlign = "center";
+            ctx.fillText(p.username.substring(0, 8), x, y - 8);
+        });
+    }
+
+    // Dropdown menu
+    const dropdown = document.getElementById("dropdown");
+    const dropdownContent = document.getElementById("dropdown-content");
+
+    function showDropdown(position) {
+        dropdownContent.textContent = `${position.x} ${position.y} ${position.z}`;
+        dropdown.style.display = "block";
+    }
+
+    document.addEventListener("click", e => {
+        if (!dropdown.contains(e.target)) dropdown.style.display = "none";
+    });
+
+    const sendAction = type => {
+        const c = dropdownContent.textContent.match(/-?\d+/g).map(Number);
+        ws.send(JSON.stringify({ type, position: { x: c[0], y: c[1] + 1, z: c[2] } }));
+        dropdown.style.display = "none";
+    };
+
+    dropdownContent.addEventListener("click", () => navigator.clipboard.writeText(dropdownContent.textContent));
+
+    document.getElementById("move-bot").onclick = () => sendAction("moveBot");
+    document.getElementById("activate-block").onclick = () => sendAction("activateBlock");
+    document.getElementById("teleport-bot").onclick = () => sendAction("teleportBot");
+    document.getElementById("test-teleport-bot").onclick = () => sendAction("testTeleportBot");
+    document.getElementById("attack-nearest-player").onclick = () => sendAction("attackNearestPlayer");
+</script>
+</body>
+</html>

@@ -1,11 +1,11 @@
 import {Vec3} from "vec3";
 import {goto} from "../../utils/Movement.js";
-import ConsoleCommand from "./ConsoleCommand.js";
+import ConsoleCommand from "../ConsoleCommand.js";
 import {botInstances} from "../../../index.js";
 
 export default class ConsoleGotoCommand extends ConsoleCommand {
     constructor() {
-        super("goto", "goto", ["move"]);
+        super("goto", "!goto <x, y, z> - Go to the specified Coordinates", ["move"]);
     }
 
     async execute(logger, args, targetUsername) {

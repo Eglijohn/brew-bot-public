@@ -1,9 +1,9 @@
-import ConsoleCommand from "./ConsoleCommand.js";
+import ConsoleCommand from "../ConsoleCommand.js";
 import {botInstances} from "../../../index.js";
 
 export default class ConsoleSayCommand extends ConsoleCommand {
     constructor() {
-        super("say", "Say a message/command in chat", ["repeat", "chat"]);
+        super("say", "!say <message> - Send a message in chat", ["repeat", "chat"]);
     }
 
     async execute(logger, args, targetUsername) {

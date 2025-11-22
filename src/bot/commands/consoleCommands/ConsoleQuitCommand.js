@@ -1,10 +1,9 @@
-import ConsoleCommand from "./ConsoleCommand.js";
+import ConsoleCommand from "../ConsoleCommand.js";
 import {botInstances} from "../../../index.js";
-import {isCommandTarget} from "../../../utils/other/Data.js";
 
 export default class ConsoleQuitCommand extends ConsoleCommand {
     constructor() {
-        super("quit", "Quit the bot", ["end", "leave"]);
+        super("quit", "!quit - Leave the game", ["end", "leave"]);
     }
 
     async execute(logger, args, targetUsername) {

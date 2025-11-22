@@ -1,13 +1,13 @@
-import ConsoleCommand from "./ConsoleCommand.js";
+import ConsoleCommand from "../ConsoleCommand.js";
 import {botInstances} from "../../../index.js";
 import Bot from "../../Bot.js";
 
 export default class ConsoleInviteCommand extends ConsoleCommand {
     constructor() {
-        super("invite", "Invite a new bot", ["join", "pet"]);
+        super("invite", "!invite <username> - Invite a Bot", ["join", "pet"]);
     }
 
-    async execute(logger, args) {
+    async execute(logger, args, targetUsername) {
         const leader = botInstances.find(i => i.leader === true);
         if (!leader) return;
 
@@ -21,7 +21,11 @@ export default class ConsoleInviteCommand extends ConsoleCommand {
         };
 
         for (const b of botInstances) {
-            if (b.bot.username === botOptions.username) return;
+            if (b.bot.username === botOptions.username) {
+                b.init()
+                logger.info(`Rejoining ${botOptions.username}...`);
+                return;
+            }
         }
 
         botInstances.push(new Bot(botOptions))

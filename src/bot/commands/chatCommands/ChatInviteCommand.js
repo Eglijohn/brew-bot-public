@@ -1,10 +1,10 @@
-import ChatCommand from "./ChatCommand.js";
+import ChatCommand from "../ChatCommand.js";
 import {botInstances} from "../../../index.js";
 import Bot from "../../Bot.js";
 
 export default class ChatInviteCommand extends ChatCommand {
     constructor() {
-        super("invite", "Invite a new bot", ["join", "pet"], 2);
+        super("invite", "!invite <username> - Invite a Bot", ["join", "pet"], 1);
     }
 
     async execute(instance, username, args) {
@@ -20,7 +20,11 @@ export default class ChatInviteCommand extends ChatCommand {
         };
 
         for (const b of botInstances) {
-            if (b.bot.username === botOptions.username) return;
+            if (b.bot.username === botOptions.username) {
+                b.init()
+                instance.logger.info(`Rejoining ${botOptions.username}...`);
+                return;
+            }
         }
 
         
@@ -28,7 +32,7 @@ export default class ChatInviteCommand extends ChatCommand {
             instance.bot.whisper(username, 'You need to specify an username');
             return;
         }
-        
+
         botInstances.push(new Bot(botOptions))
         instance.logger.info(`Inviting ${botOptions.username}...`);
     }

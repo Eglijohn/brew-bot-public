@@ -1,8 +1,8 @@
-import ChatCommand from "./ChatCommand.js";
+import ChatCommand from "../ChatCommand.js";
 
 export default class ChatPositionCommand extends ChatCommand {
     constructor() {
-        super("position", "Show the bot's position", ["pos"], 1);
+        super("position", "!pos - Show the bot's position", ["pos"], 1);
     }
 
     async execute(instance, username, args) {

@@ -1,33 +1,46 @@
-import { equipItem } from "./Inventory.js";
+import { equipToolForBlock } from "./Inventory.js";
 import AABB from "prismarine-physics/lib/aabb.js";
 import {Vec3} from "vec3";
 
-async function dig(instance, position) {
+/**
+ * Digger, trigger, skibidi `async function dig()`
+ * @param instance Instance
+ * @param position Block pos
+ * @param autoEquipTool Equip best tool
+ * @returns {Promise<void>} Dih
+ */
+async function dig(instance, position, autoEquipTool = true) {
     const block = instance.bot.blockAt(position);
 
     if (!block || block.name === "air") return;
 
-    equipItem(instance, "netherite_pickaxe", "hand");
+    if (autoEquipTool) equipToolForBlock(instance, block);
     await instance.bot.dig(block, false);
 }
 
-async function instamine(instance, position, ticks, autoEquipTool = true) {
+/**
+ * Mine a block
+ * @param instance Instance
+ * @param position Block Pos
+ * @param autoEquipTool Auto equip tool
+ * @returns {Promise<void>} Status
+ */
+async function instamine(instance, position, autoEquipTool = true) {
     const block = instance.bot.blockAt(position);
+    const hardness = block.hardness;
     const loc = { x: position.x, y: position.y, z: position.z };
-    const bestTool = block.material.replace('mineable/', '')
-    const tool = instance.bot.inventory.items().find(i => i.name.includes(('_' + bestTool) || bestTool + ''));
+    if (autoEquipTool) equipToolForBlock(instance, block);
 
-    if (bestTool && autoEquipTool) equipItem(instance, tool?.name || 'netherite_pickaxe', "hand");
-
-    for (let i = 0; i < ticks; i++) {
+    for (let i = 0; i < hardness; i++) {
         instance.bot._client.write('block_dig', { status: 0, location: loc, face: 1 });
         instance.bot._client.write('block_dig', { status: 2, location: loc, face: 1 });
         await instance.bot.waitForTicks(1);
     }
 }
 
+
 /**
- * Get entity bounding box at a given feet position
+ * Get entity bounding box
  */
 function getEntityAABB(pos, width = 0.6, height = 1.8) {
     const half = width / 2;
@@ -90,4 +103,5 @@ function canTeleport(instance, pos) {
     return true;
 }
 
-export { dig, instamine, canTeleport }
+
+export { dig, instamine, canTeleport, getEntityAABB }

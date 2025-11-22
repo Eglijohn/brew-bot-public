@@ -1,10 +1,10 @@
-import ConsoleCommand from "./ConsoleCommand.js";
+import ConsoleCommand from "../ConsoleCommand.js";
 import {botInstances} from "../../../index.js";
 import {isCommandTarget} from "../../../utils/other/Data.js";
 
 export default class ConsolePositionCommand extends ConsoleCommand {
     constructor() {
-        super("position", "Show the bot's position", ["pos"]);
+        super("position", "!pos - Display the Bot's position", ["pos"]);
     }
 
     async execute(logger, args, targetUsername) {

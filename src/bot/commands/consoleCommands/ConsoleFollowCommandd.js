@@ -1,10 +1,10 @@
 import {follow} from "../../utils/Movement.js";
-import ConsoleCommand from "./ConsoleCommand.js";
+import ConsoleCommand from "../ConsoleCommand.js";
 import {botInstances} from "../../../index.js";
 
 export default class ConsoleFollowCommand extends ConsoleCommand {
     constructor() {
-        super("follow", "Follow me!", []);
+        super("follow", "!follow <player> - Follow a player", []);
     }
 
     async execute(logger, args, targetUsername) {

@@ -1,14 +1,15 @@
-import ChatCommand from "./ChatCommand.js";
-import {teleport} from "../../utils/Movement.js";
+import ChatCommand from "../ChatCommand.js";
 import {Vec3} from "vec3";
+import TeleportTask from "../../utils/TeleportTask.js";
 
 export default class ChatTeleportCommand extends ChatCommand {
     constructor() {
-        super("teleport", "Teleport to a player", ["tp", "tpto"], 1);
+        super("teleport", "!teleport <player | x, y, z> - Teleport to a position or player", ["tp", "tpto"], 1);
     }
 
     async execute(instance, username, args) {
         let goal;
+        const t = new TeleportTask(instance, true, true);
 
         if (args.length === 1) {
             goal = instance.bot.players[username].entity.position
@@ -18,6 +19,6 @@ export default class ChatTeleportCommand extends ChatCommand {
             goal = new Vec3(parseFloat(args[1]), parseFloat(args[2]), parseFloat(args[3]));
         }
 
-        await teleport(instance, goal, false, true, true);
+        await t.fastTeleport(goal, false);
     }
 }

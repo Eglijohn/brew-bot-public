@@ -1,33 +1,60 @@
 {
-  "autoArmor": true,
-  "autoEat": true,
   "autoTotem": true,
-  "commands": {
-    "chat": false,
-    "commandline": true,
-    "whisper": true
+  "autoEat": true,
+  "autoReconnect": {
+    "enabled": true,
+    "timeout": 5000
   },
-  "console": {
-    "sendChat": true,
-    "theme": {
-      "oldTheme": false
-    }
-  },
-  "friends": [],
-  "logOnTotemPop": true,
   "lookAtNearestPlayer": true,
   "packetLogger": {
     "enabled": false,
-    "packets": []
+    "all": true,
+    "onlyC2S": true,
+    "onlyS2C": false,
+    "packets": [
+    ],
+    "ignore": [
+    ]
   },
+  "sneakAtPlayers": true,
   "pathfinder": {
-    "canDig": true,
-    "canPlace": true
+    "canPlace": true,
+    "canDig": false
+  },
+  "autoArmor": true,
+  "antiVoid": true,
+  "commands": {
+    "chat": false,
+    "whisper": true,
+    "commandline": true
   },
   "retaliate": {
     "enabled": true,
     "ignoreFriends": true
   },
+  "console": {
+    "theme": {
+      "oldTheme": false
+    },
+    "sendChat": true
+  },
   "velocity": true,
-  "noFall": true
+  "noFall": true,
+  "logOnTotemPop": true,
+  "discord": {
+    "webHook": {
+      "url": "",
+      "enabled": false,
+      "logs": {
+        "chat": true,
+        "info": true,
+        "warn": true,
+        "error": true
+      }
+    }
+  },
+  "friends": [
+    "Eglijohn"
+  ],
+  "blacklist": []
 }

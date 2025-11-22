@@ -1,9 +1,9 @@
-import ChatCommand from "./ChatCommand.js";
+import ChatCommand from "../ChatCommand.js";
 import {attack} from "../../utils/Attack.js";
 
 export default class ChatAttackCommand extends ChatCommand {
     constructor() {
-        super("attack", "Attack somebody", ["hit", "damage"], 2);
+        super("attack", "!attack <username | entityID> [mace] [heights] - Attack an Entity", ["hit", "damage"], 2);
     }
 
     async execute(instance, username, args){

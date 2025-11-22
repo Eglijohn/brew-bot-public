@@ -1,8 +1,8 @@
-import ChatCommand from "./ChatCommand.js";
+import ChatCommand from "../ChatCommand.js";
 
 export default class ChatRotateCommand extends ChatCommand {
     constructor() {
-        super("rotate", "Rotate to face the nearest player", ["look"], 1);
+        super("rotate", "!rotate <yaw> <pitch> [force] - Rotate the Head", ["look"], 2);
     }
 
     async execute(instance, username, args) {

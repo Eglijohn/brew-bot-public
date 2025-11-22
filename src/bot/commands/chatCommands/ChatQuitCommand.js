@@ -1,8 +1,8 @@
-import ChatCommand from "./ChatCommand.js";
+import ChatCommand from "../ChatCommand.js";
 
 export default class ChatQuitCommand extends ChatCommand {
     constructor() {
-        super("quit", "Quit the bot", ["end", "leave"], 2);
+        super("quit", "!quit - Leave the Server", ["end", "leave"], 1);
     }
 
     async execute(instance, message, args) {

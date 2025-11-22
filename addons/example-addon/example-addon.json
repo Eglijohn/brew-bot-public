@@ -1,0 +1,7 @@
+{
+  "name": "Example Addon",
+  "version": "1.0.0",
+  "author": "Eglijohn",
+  "description": "An example addon for demonstration",
+  "entry": "index.js"
+}

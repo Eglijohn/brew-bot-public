@@ -1,9 +1,9 @@
-import ChatCommand from "./ChatCommand.js";
+import ChatCommand from "../ChatCommand.js";
 import {reloadConfig} from "../../../index.js";
 
 export default class ChatReloadConfigCommand extends ChatCommand {
     constructor() {
-        super("reloadconfig", "reloade", [], 1);
+        super("reloadconfig", "!reloadconfig - Reload the config file", [], 2);
     }
 
     async execute(instance, username, args) {

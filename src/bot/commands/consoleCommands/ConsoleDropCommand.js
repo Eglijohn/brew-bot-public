@@ -1,10 +1,10 @@
 import {dropItem, equipItem} from "../../utils/Inventory.js";
-import ConsoleCommand from "./ConsoleCommand.js";
+import ConsoleCommand from "../ConsoleCommand.js";
 import {botInstances} from "../../../index.js";
 
 export default class ConsoleDropCommand extends ConsoleCommand {
     constructor() {
-        super("drop", "drop an item", ["throw"]);
+        super("drop", "!drop <item> [amount] - Drop Items", ["throw"]);
     }
 
     async execute(logger, args, targetUsername) {

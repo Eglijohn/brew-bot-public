@@ -1,10 +1,10 @@
-import ChatCommand from "./ChatCommand.js";
+import ChatCommand from "../ChatCommand.js";
 import {Vec3} from "vec3";
 import {goto} from "../../utils/Movement.js";
 
 export default class ChatGotoCommand extends ChatCommand {
     constructor() {
-        super("goto", "goto", ["move"], 2);
+        super("goto", "!goto <x, y, z> - Goto the desired Coordinates", ["move"], 2);
     }
 
     async execute(instance, username, args) {

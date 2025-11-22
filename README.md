@@ -43,6 +43,7 @@ A Minecraft Bot for the Drunks written in JavaScript with Mineflayer
         },
         "velocity": true, // Anti Knockback
         "noFall": true // No fall damage
+        ... And more i dont want to put here :P
    }
    ```
 3. Edit ``config/accounts.json``:
@@ -81,7 +82,7 @@ A Minecraft Bot for the Drunks written in JavaScript with Mineflayer
 ## Running the Bot
 1. Display all arguments using
     ```bash
-   node src/index.js --help
+   node --no-wwarnings src/index.js --help
     ```
 2. Start it with all required arguments: 
    - Example: I want my bot to join ``simpcraft.com`` as ``Eglijohn_Dev``:

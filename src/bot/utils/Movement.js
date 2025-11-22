@@ -2,87 +2,33 @@ import {Vec3} from "vec3";
 import pkg from 'mineflayer-pathfinder';
 import minecraftData from 'minecraft-data';
 import {config} from "../../index.js";
+import TeleportTask from "./TeleportTask.js";
 import {canTeleport} from "./World.js";
 
 const { Movements, goals } = pkg;
 
 /**
- * Teleport far distances using the LiveOverflow exploit
- * @param instance Bot instance
- * @param goal Vec3 goal
- * @param forceNormal force single packet (max. 10 Blocks)
- * @param onGround onGround value
- * @param log Log the tp
- * @returns {Promise<void|boolean>} Status
+ * Center on a block
+ * @param instance instance
  */
-async function teleport(instance, goal, forceNormal, onGround = true, log = false) {
-    const distance = instance.bot.entity.position.distanceTo(goal);
-    const packetsRequired = Math.ceil(distance / 10) - 1;
-    if (packetsRequired > 20) {
-        instance.logger.error(`Too many packets required: ${packetsRequired}/20`);
-        return false;
+async function center(instance) {
+    const pos = instance.bot.entity.position;
+    const t = new TeleportTask(instance, true, true);
+    let centeredPos = new Vec3(Math.floor(pos.x) + 0.5, pos.y, Math.floor(pos.z) + 0.5);
+    while (!canTeleport(instance, centeredPos)) {
+        centeredPos = centeredPos.offset(0, 0.1, 0);
     }
-
-    const sendPackets = async () => {
-        const startPos = instance.bot.entity.position;
-
-        // Spam the packets before teleporting
-        for (let i = 0; i < packetsRequired; i++) {
-            await instance.bot._client.write('position', {
-                x: startPos.x,
-                y: startPos.y,
-                z: startPos.z,
-                yaw: null,
-                pitch: null,
-                onGround: onGround
-            });
-        }
-
-        // Send the final teleport packet
-        await instance.bot._client.write('position', {
-            x: goal.x,
-            y: goal.y,
-            z: goal.z,
-            yaw: null,
-            pitch: null,
-            onGround: onGround
-        });
-    };
-
-    // Normal teleports instead of the Paperclip exploit
-    const sendPacket = async () => {
-        await instance.bot._client.write('position', {
-            x: goal.x,
-            y: goal.y,
-            z: goal.z,
-            yaw: null,
-            pitch: null,
-            onGround: onGround
-        });
-    };
-
-    try {
-        if (!canTeleport(instance, goal)) {
-            instance.logger.error('Cannot teleport');
-            return false;
-        }
-        if (log) instance.logger.info('Teleporting ' + distance.toFixed(2) + 'm...');
-        forceNormal ? await sendPacket() : await sendPackets();
-        instance.bot.entity.position = goal;
-        return true;
-    } catch (e) {
-        console.error(e);
-        return false;
-    }
+    await t.fastTeleport(centeredPos);
 }
 
 /**
  * Function to walk to a block
  * @param instance Instance
  * @param {Vec3} goal Goal Vec3
+ * @param range Range to goal
  * @returns {boolean} Status
  */
-function goto(instance, goal) {
+function goto(instance, goal, range = 0) {
     const mcData = minecraftData(instance.bot.version);
     const movements = new Movements(instance.bot, mcData);
 
@@ -90,7 +36,12 @@ function goto(instance, goal) {
     movements.canPlace = config.pathfinder.canPlace;
 
     try {
-        const g = new goals.GoalBlock(goal.x, goal.y, goal.z);
+        let g;
+        if (range > 0) {
+            g = new goals.GoalNear(goal.x, goal.y, goal.z, range);
+        } else {
+            g = new goals.GoalBlock(goal.x, goal.y, goal.z);
+        }
         instance.bot.pathfinder.setMovements(movements);
         instance.bot.pathfinder.setGoal(g);
         return true;
@@ -135,4 +86,4 @@ function stopGoals(instance) {
     return true;
 }
 
-export { teleport, goto, follow, stopGoals, canTeleport };
+export { goto, follow, stopGoals, center };

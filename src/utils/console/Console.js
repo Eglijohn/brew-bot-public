@@ -2,6 +2,7 @@ import readline from "readline";
 import chalk from "chalk";
 import {GRAY, PRIMARY} from "../other/Colors.js";
 import {botInstances, chatCommands, config, consoleCommands, VERSION} from "../../index.js";
+import {convertEmojis} from "../other/Data.js";
 
 export default function initConsoleInput() {
     const rl = readline.createInterface({
@@ -20,7 +21,8 @@ export default function initConsoleInput() {
         } else {
             botInstances.forEach(instance => {
                 if (instance && instance.bot && config.console.sendChat === true) {
-                    instance.bot.chat(input);
+                    const msg = convertEmojis(input)
+                    instance.bot.chat(msg);
                 }
             });
         }

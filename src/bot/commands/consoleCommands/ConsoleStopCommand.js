@@ -1,10 +1,10 @@
 import {stopGoals} from "../../utils/Movement.js";
-import ConsoleCommand from "./ConsoleCommand.js";
+import ConsoleCommand from "../ConsoleCommand.js";
 import {botInstances} from "../../../index.js";
 
 export default class ConsoleStopCommand extends ConsoleCommand {
     constructor() {
-        super("stop", "stop", ["stopfollow"]);
+        super("stop", "!stop - Stop all pathfinder Goals", ["stopfollow"]);
     }
 
     async execute(logger, aggsargs, targetUsername) {

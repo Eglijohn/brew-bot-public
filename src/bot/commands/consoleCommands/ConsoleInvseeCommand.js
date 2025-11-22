@@ -1,11 +1,11 @@
-import ConsoleCommand from "./ConsoleCommand.js";
+import ConsoleCommand from "../ConsoleCommand.js";
 import {botInstances} from "../../../index.js";
 import chalk from "chalk";
 import {GRAY, PRIMARY_LIGHT} from "../../../utils/other/Colors.js";
 
 export default class ConsoleInvseeCommand extends ConsoleCommand {
     constructor() {
-        super("inv", "See inventory", ["invsee", "inventory"]);
+        super("inv", "!invsee - See the Bot's inventory", ["invsee", "inventory"]);
     }
 
     async execute(logger, args, targetUsername) {

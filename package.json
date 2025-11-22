@@ -1,21 +1,26 @@
 {
-  "name": "brew-bot",
-  "version": "1.0.0+public",
-  "main": "index.js",
+  "name": "brewbot",
+  "version": "2.0.1",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "test": "node src/index.js --help"
+    "test": "node src/index.js"
   },
   "keywords": [],
-  "author": "Eglijohn & R3akeOn3_",
+  "author": "Eglijohn",
   "description": "A Minecraft Bot for the Drunks",
   "dependencies": {
-    "chalk": "^5.6.0",
+    "@nbsjs/core": "^6.0.0",
+    "chalk": "^5.6.2",
+    "discord.js": "^14.22.1",
     "minecraft-data": "^3.98.0",
     "mineflayer": "^4.32.0",
     "mineflayer-armor-manager": "^2.0.1",
     "mineflayer-pathfinder": "^2.4.5",
+    "mineflayer-web-inventory": "^1.8.5",
     "prismarine-physics": "^1.10.0",
-    "vec3": "^0.1.10"
+    "prismarine-viewer": "^1.30.0",
+    "vec3": "^0.1.10",
+    "ws": "^8.18.3"
   }
 }

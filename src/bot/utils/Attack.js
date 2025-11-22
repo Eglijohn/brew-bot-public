@@ -1,41 +1,41 @@
 import {equipItem} from "./Inventory.js";
-import {teleport} from "./Movement.js";
+import TeleportTask from "./TeleportTask.js";
 
 /**
  * Attack an entity
  * @param instance Instance
- * @param target Target entity
- * @param mace Mace Attack
- * @param maceHeight Height for mace attack (max 10)
+ * @param target Entity
+ * @param mace Mace hit
+ * @param maceHeight Mace heights
+ * @param log Log the attack
  * @returns {Promise<void>} Status
  */
-export async function attack(instance, target, mace = false, maceHeight) {
+export async function attack(instance, target, mace = false, maceHeight, log = false) {
     const entity = target?.entity || target;
     const position = entity?.position;
 
     if (!entity || !position) return;
-
     const targetName = entity.username || entity.displayName || entity.name || entity.id;
 
     try {
+        if (log) instance.logger.warn(`Attacking ${targetName} ${mace ? `with mace at height: ${maceHeight.join(', ')}` : ''}`);
         const originalPos = instance.bot.entity.position;
+        const t = new TeleportTask(instance, true, false);
 
         if (mace) {
-            instance.logger.warn(`Attacking ${targetName} with mace at height: ${maceHeight}`);
-
-            equipItem(instance, 'mace', 'hand');
+            equipItem(instance, 'mace', 'hand', log);
 
             const attackPos = position.offset(0, maceHeight, 0);
 
-            await teleport(instance, attackPos, false);
-            await teleport(instance, position, true);
+            await t.fastTeleport(attackPos, false, false);
+            await t.fastTeleport(position, false, false);
             await instance.bot.attack(entity);
         } else {
-            await teleport(instance, position, false);
+            await t.fastTeleport(position, false);
             await instance.bot.attack(entity);
         }
 
-        await teleport(instance, originalPos, false);
+        await t.fastTeleport(originalPos, false);
     } catch (error) {
         console.error(error);
     }
